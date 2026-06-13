@@ -1,30 +1,60 @@
-"""🧪 python test_setup.py — FINAL"""
+"""🧪 Test Setup — python test_setup.py"""
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
-print("="*50);print("  🧪 AI RPA BOT TEST");print("="*50)
-print("\n🏢 Odoo:")
+
+print("=" * 50)
+print("  🧪 AI RPA Bot — Connection Test")
+print("=" * 50)
+
+# Odoo
+print("\n🏢 Odoo ERP:")
 from odoo_auto_connector import OdooAutoConnector
-o=OdooAutoConnector();ok,m=o.connect();print(f"  {'✅' if ok else '❌'} {m}")
+o = OdooAutoConnector()
+ok, msg = o.connect()
+print(f"  {'✅' if ok else '❌'} {msg}")
 if ok:
-    c=o.test_connection()
-    if c: print(f"  ✅ {c.get('name','')}")
-    p=o.get_all_products(5);print(f"  📦 Products: {len(p)}")
-    for pr in p: print(f"    - {pr['name']}: {pr['price']:,.0f}")
+    company = o.test_connection()
+    if company:
+        print(f"  ✅ Company: {company.get('name', '')}")
+    products = o.get_all_products(5)
+    print(f"  📦 Products: {len(products)}")
+    for p in products:
+        print(f"    - {p['name']}: {p['price']:,.0f} so'm")
+
+# Telegram
 print("\n📱 Telegram:")
-t=os.getenv("TELEGRAM_BOT_TOKEN")
-if t:
-    print(f"  ✅ Token: {t[:8]}...")
+token = os.getenv("TELEGRAM_BOT_TOKEN")
+if token:
+    print(f"  ✅ Token: {token[:8]}...")
     try:
-        import requests;r=requests.get(f"https://api.telegram.org/bot{t}/getMe",timeout=10)
-        if r.ok: print(f"  ✅ @{r.json()['result'].get('username','')}")
-    except: pass
-else: print("  ❌ No token")
-print("\n🧠 AI:")
+        import requests
+        r = requests.get(f"https://api.telegram.org/bot{token}/getMe", timeout=10)
+        if r.ok:
+            print(f"  ✅ Bot: @{r.json()['result'].get('username', '')}")
+    except Exception:
+        pass
+else:
+    print("  ❌ No token")
+
+# AI
+print("\n🧠 AI Engine:")
 try:
-    import groq;print(f"  {'✅' if os.getenv('GROQ_API_KEY') else '⚠️'} Groq")
-except: print("  ⚠️ No Groq")
-print("\n📸 OCR:")
-try: import pytesseract;print(f"  ✅ Tesseract {pytesseract.get_tesseract_version()}")
-except: print("  ⚠️ No OCR")
-print("\n"+"="*50);print("🚀 python run_bot.py")
+    import groq  # noqa
+    key = os.getenv("GROQ_API_KEY")
+    print(f"  {'✅' if key else '⚠️'} Groq {'(key set)' if key else '(no key)'}")
+except ImportError:
+    print("  ⚠️ Groq not installed")
+
+# OCR
+print("\n📸 OCR Engine:")
+try:
+    import pytesseract
+    version = pytesseract.get_tesseract_version()
+    print(f"  ✅ Tesseract {version}")
+except Exception:
+    print("  ⚠️ Tesseract not available")
+
+print("\n" + "=" * 50)
+print("🚀 Run: python run_bot.py")
